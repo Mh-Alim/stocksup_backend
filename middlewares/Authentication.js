@@ -1,28 +1,29 @@
-const User = require("../models/userModel");
+import Code from "../models/codeModel.js ";
+import jwt from "jsonwebtoken";
 
-exports.isAuthenticate = catchAsyncErrors(async (req, res, next) => {
-  const { token } = req.cookie;
-
-  if (!token) {
-    return next(new ErrorHandler("Login to access this resource", 401));
-  }
-
-  const decodedData = await jwt.verify(token, process.env.JWT_SECRET_KEY);
-  if (!decodedData) return res.status(400).json({
-        error : "Incorrect token"
-  })
-  req.user = await User.findById(decodedData.id);
-  next();
-});
-
-exports.AuthorizeRoles = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+const isAuthenticate = async (req, res, next) => {
+  try {
+    console.log("Authentication");
+    const { token } = req.body;
+    console.log(token);
+    if (!token) {
       return res.status(400).json({
-        error: "You are not allowed to access this resource",
+        error: "Token is required",
       });
     }
-
+    const decodedData = await jwt.verify(token, "dhfsdahfskdhfksdhfsd");
+    console.log(decodedData);
+    if (!decodedData)
+      return res.status(400).json({
+        error: "Incorrect token",
+      });
+    console.log("here");
     next();
-  };
+  } catch (err) {
+    return res.status(400).json({
+      error: err,
+    });
+  }
 };
+
+export default isAuthenticate;

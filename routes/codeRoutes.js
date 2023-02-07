@@ -1,5 +1,7 @@
 import express from "express";
 import { upload_codes } from "../controllers/codeController.js";
+import { alredyLoggedIn, loginUser } from "../controllers/userController.js";
+import isAuthenticate from "../middlewares/Authentication.js";
 // import fs from "fs";
 // import path from "path";
 // import multer from "multer";
@@ -36,5 +38,7 @@ import { upload_codes } from "../controllers/codeController.js";
 const router = express.Router();
 
 router.post("/upload_codes", upload_codes);
+router.post("/login", loginUser);
+router.post("/is_logged_in", isAuthenticate, alredyLoggedIn);
 
 export default router;
