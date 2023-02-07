@@ -7,15 +7,19 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 // ROUTE IMPORTS
 
 // ERROR MIDDLEWARE -> customErrorHandler
 // const PortfolioRoutes = require("./routes/portfolio");
 import PortfolioRoutes from "./routes/portfolio.js";
+import codeRoutes from "./routes/codeRoutes.js";
+// const codeRoutes = require("./routes/codeRoutes.js");
 
 app.use("/portfolios", PortfolioRoutes);
+app.use("/api/v1", codeRoutes);
+// app.use("/api/v1", codeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
