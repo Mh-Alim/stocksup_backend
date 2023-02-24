@@ -74,6 +74,10 @@ io.on("connection", (socket) => {
     console.log(buyProd);
     const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
+      if (portfolio.stock < buyProd) {
+        socket.emit("stock-empty");
+        return portfolio.stock;
+      }
       portfolio.stock -= buyProd;
       await portfolio.save();
       console.log("buy ", portfolio);
@@ -84,9 +88,10 @@ io.on("connection", (socket) => {
     io.to(id).emit("show-stock", remainingStock);
   });
 
-  socket.on("join-room", room => {
+  socket.on("join-room", (room) => {
+    socket.leaveAll();
     socket.join(room);
-  })
+  });
 });
 
 server.listen(PORT, () => {
