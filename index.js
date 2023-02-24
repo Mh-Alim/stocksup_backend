@@ -51,6 +51,8 @@ const io = new Server(server, {
   cors: {
     origin: [
       "https://innovationcell-nitrr.github.io/pitcher",
+      "http://localhost:3000",
+      "https://pitchersfork.netlify.app",
       "https://admin.socket.io",
     ],
     credentials: true,
