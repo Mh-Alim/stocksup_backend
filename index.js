@@ -2,6 +2,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
+
+import http from "http";
+import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
+
+import Portfolio from "./models/portfolio.js";
+
 const app = express();
 
 app.use(express.json());
@@ -32,5 +39,58 @@ mongoose
       useUnifiedTopology: true,
     }
   )
-  .then(() => app.listen(PORT, () => console.log("listening on port " + PORT)))
+  // .then(() => app.listen(PORT, () => console.log("listening on port " + PORT)))
+  .then(() => console.log("Mongodb connected successfully"))
   .catch((issues) => console.log("issues " + issues));
+
+// socket
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", "https://admin.socket.io"],
+    credentials: true,
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("socket is connected");
+
+  // at the starting everone will see this getstock
+  socket.on("getStock", async (id, cb) => {
+    console.log("get stock backend");
+    const totStock = async () => {
+      const portfolio = await Portfolio.findById(id);
+      console.log(portfolio);
+      return portfolio.stock;
+    };
+    let a = await totStock();
+
+    cb(a);
+  });
+
+  socket.on("buy", async (id, buyProd) => {
+    console.log(buyProd);
+    const totStock = async () => {
+      const portfolio = await Portfolio.findById(id);
+      portfolio.stock -= buyProd;
+      await portfolio.save();
+      console.log("buy ", portfolio);
+      return portfolio.stock;
+    };
+    let remainingStock = await totStock();
+
+    io.to(id).emit("show-stock", remainingStock);
+  });
+
+  socket.on("join-room", room => {
+    socket.join(room);
+  })
+});
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+instrument(io, { auth: false });
