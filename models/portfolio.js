@@ -5,6 +5,7 @@ const portfolio = mongoose.Schema({
   about: String,
   creator: String,
   tags: [String],
+
   //   selectedFile: String,
 });
 
