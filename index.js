@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import http from "http";
-import {Server} from "socket.io";
-import {instrument} from "@socket.io/admin-ui";
+import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 
 import Portfolio from "./models/portfolio.js";
 
@@ -13,7 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 // ROUTE IMPORTS
 
@@ -64,7 +64,6 @@ io.on("connection", (socket) => {
 
   // at the starting everone will see this getstock
   socket.on("getStock", async (id, cb) => {
-    console.log("get stock backend");
     const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
       console.log(portfolio);
@@ -85,11 +84,10 @@ io.on("connection", (socket) => {
       }
       portfolio.stock -= buyProd;
       await portfolio.save();
-      console.log("buy ", portfolio);
       return portfolio.stock;
     };
     let remainingStock = await totStock();
-
+    socket.emit("successfully-purchased", buyProd);
     io.to(id).emit("show-stock", remainingStock);
   });
 
@@ -103,4 +101,4 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-instrument(io, {auth: false});
+instrument(io, { auth: false });
