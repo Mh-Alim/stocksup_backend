@@ -24,7 +24,7 @@ import codeRoutes from "./routes/codeRoutes.js";
 // const codeRoutes = require("./routes/codeRoutes.js");
 
 app.use("/portfolios", PortfolioRoutes);
-app.use("/api/v1", codeRoutes);
+app.use("/portfolios/api/v1", codeRoutes);
 // app.use("/api/v1", codeRoutes);
 
 const PORT = process.env.PORT || 5000;
@@ -76,18 +76,20 @@ io.on("connection", (socket) => {
 
   socket.on("buy", async (id, buyProd) => {
     console.log(buyProd);
+    let flag = false;
     const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
       if (portfolio.stock < buyProd) {
         socket.emit("stock-empty");
         return portfolio.stock;
       }
+      flag = true;
       portfolio.stock -= buyProd;
       await portfolio.save();
       return portfolio.stock;
     };
     let remainingStock = await totStock();
-    socket.emit("successfully-purchased", buyProd);
+    if (flag) socket.emit("successfully-purchased", buyProd);
     io.to(id).emit("show-stock", remainingStock);
   });
 
