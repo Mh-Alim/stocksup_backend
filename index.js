@@ -24,7 +24,7 @@ import codeRoutes from "./routes/codeRoutes.js";
 // const codeRoutes = require("./routes/codeRoutes.js");
 
 app.use("/portfolios", PortfolioRoutes);
-app.use("/portfolios/api/v1", codeRoutes);
+app.use("/api/v1", codeRoutes);
 // app.use("/api/v1", codeRoutes);
 
 const PORT = process.env.PORT || 5000;
