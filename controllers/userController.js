@@ -26,11 +26,12 @@ const loginUser = async (req, res, next) => {
   user.isActive = true;
   await user.save();
   const token = await user.getJWTToken();
-
+  const userId = user._id;
   res.status(200).json({
     success: true,
     info: user,
     token,
+    userId : userId
   });
 };
 
