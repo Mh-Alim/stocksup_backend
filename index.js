@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import http from "http";
-import { Server } from "socket.io";
-import { instrument } from "@socket.io/admin-ui";
+import {Server} from "socket.io";
+import {instrument} from "@socket.io/admin-ui";
 
 import Portfolio from "./models/portfolio.js";
 
@@ -13,7 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 // ROUTE IMPORTS
 
@@ -50,9 +50,10 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "https://innovationcell-nitrr.github.io/pitcher",
+      "https://innovationcell-nitrr.github.io",
       "http://localhost:3000",
       "https://pitchersfork.netlify.app",
+      "https://main--pitchersfork.netlify.app",
       "https://admin.socket.io",
     ],
     credentials: true,
@@ -103,4 +104,4 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-instrument(io, { auth: false });
+instrument(io, {auth: false});
