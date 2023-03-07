@@ -35,8 +35,11 @@ const loginUser = async (req, res, next) => {
 };
 
 const alredyLoggedIn = async (req, res) => {
+  const user = await Code.findById(req.id);
+  console.log("user is", user);
   res.status(200).json({
     success: true,
+    user: user,
   });
 };
 export { loginUser, alredyLoggedIn };

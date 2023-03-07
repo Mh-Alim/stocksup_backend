@@ -12,12 +12,13 @@ const isAuthenticate = async (req, res, next) => {
       });
     }
     const decodedData = await jwt.verify(token, "dhfsdahfskdhfksdhfsd");
-    console.log(decodedData);
     if (!decodedData)
       return res.status(400).json({
         error: "Incorrect token",
       });
-    console.log("here");
+
+    req.id = decodedData.id;
+    
     next();
   } catch (err) {
     return res.status(400).json({
