@@ -4,16 +4,17 @@ import mongoose from "mongoose";
 import cors from "cors";
 
 import http from "http";
-import {Server} from "socket.io";
-import {instrument} from "@socket.io/admin-ui";
+import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 
 import Portfolio from "./models/portfolio.js";
+import Code from "./models/codeModel.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 // ROUTE IMPORTS
 
@@ -21,6 +22,7 @@ app.use(cors());
 // const PortfolioRoutes = require("./routes/portfolio");
 import PortfolioRoutes from "./routes/portfolio.js";
 import codeRoutes from "./routes/codeRoutes.js";
+
 // const codeRoutes = require("./routes/codeRoutes.js");
 
 app.use("/portfolios", PortfolioRoutes);
@@ -64,34 +66,44 @@ io.on("connection", (socket) => {
   console.log("socket is connected");
 
   // at the starting everone will see this getstock
-  socket.on("getStock", async (id, cb) => {
+  socket.on("getStock", async (id, userId, cb) => {
     const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
+      const user = await Code.findById(userId);
       console.log(portfolio);
-      return portfolio.stock;
+      return [portfolio.stock, user.userStock];
     };
     let a = await totStock();
 
     cb(a);
   });
 
-  socket.on("buy", async (id, buyProd) => {
-    console.log(buyProd);
+  socket.on("buy", async (id, userId, buyProd) => {
     let flag = false;
     const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
+      const user = await Code.findById(userId);
+
+      if (user.userStock < buyProd) {
+        socket.emit("userStock-empty");
+        return [portfolio.stock, user.userStock];
+      }
       if (portfolio.stock < buyProd) {
         socket.emit("stock-empty");
-        return portfolio.stock;
+        return [portfolio.stock, user.userStock];
       }
+
       flag = true;
       portfolio.stock -= buyProd;
+      user.userStock -= buyProd;
+      await user.save();
       await portfolio.save();
-      return portfolio.stock;
+      return [portfolio.stock, user.userStock];
     };
     let remainingStock = await totStock();
     if (flag) socket.emit("successfully-purchased", buyProd);
     io.to(id).emit("show-stock", remainingStock);
+    socket.emit("show-userStock", remainingStock);
   });
 
   socket.on("join-room", (room) => {
@@ -104,4 +116,4 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-instrument(io, {auth: false});
+instrument(io, { auth: false });
