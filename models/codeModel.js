@@ -13,6 +13,10 @@ const nameCodeSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  userStock: {
+    type: Number,
+    default: 1000,
+  },
 });
 
 nameCodeSchema.methods.getJWTToken = async function (next) {
