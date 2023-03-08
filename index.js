@@ -32,7 +32,7 @@ app.use(cors());
 app.use("/portfolios", PortfolioRoutes);
 app.use("/api/v1", codeRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://lakshman08:b6WipDqxkcIsWIkr@cluster0.x5iwwjx.mongodb.net/?retryWrites=true&w=majority";
 
 (async () => {
