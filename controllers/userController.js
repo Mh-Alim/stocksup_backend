@@ -31,13 +31,16 @@ const loginUser = async (req, res, next) => {
     success: true,
     info: user,
     token,
-    userId : userId
+    userId: userId,
   });
 };
 
 const alredyLoggedIn = async (req, res) => {
   const user = await Code.findById(req.id);
-  console.log("user is", user);
+  if (!user)
+    return res.status(400).json({
+      error: "User not found",
+    });
   res.status(200).json({
     success: true,
     user: user,
