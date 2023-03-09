@@ -7,97 +7,111 @@ import http from "http";
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 
+import Portfolio from "./models/portfolio.js";
+import Code from "./models/codeModel.js";
+
+const app = express();
+
+app.use(express.json());
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+// ROUTE IMPORTS
+
+// ERROR MIDDLEWARE -> customErrorHandler
+// const PortfolioRoutes = require("./routes/portfolio");
 import PortfolioRoutes from "./routes/portfolio.js";
 import codeRoutes from "./routes/codeRoutes.js";
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: [
-      "https://innovationcell-nitrr.github.io",
-      "http://localhost:3000",
-      "https://pitchersfork.netlify.app",
-      "https://main--pitchersfork.netlify.app",
-      "https://admin.socket.io",
-    ],
-    credentials: true,
-  },
-});
-
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+// const codeRoutes = require("./routes/codeRoutes.js");
 
 app.use("/portfolios", PortfolioRoutes);
 app.use("/api/v1", codeRoutes);
+// app.use("/api/v1", codeRoutes);
 
-const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://lakshman08:b6WipDqxkcIsWIkr@cluster0.x5iwwjx.mongodb.net/?retryWrites=true&w=majority";
+const PORT = process.env.PORT || 5000;
 
-(async () => {
-  try {
-    await mongoose.connect(MONGO_URI, {
+// lakshman08  b6WipDqxkcIsWIkr
+
+mongoose
+  .connect(
+    "mongodb+srv://lakshman08:b6WipDqxkcIsWIkr@cluster0.x5iwwjx.mongodb.net/?retryWrites=true&w=majority",
+    {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-    });
-    console.log("Mongodb connected successfully");
-  } catch (error) {
-    console.log("Error connecting to MongoDB", error);
-  }
-})();
+    }
+  )
+  // .then(() => app.listen(PORT, () => console.log("listening on port " + PORT)))
+  .then(() => console.log("Mongodb connected successfully"))
+  .catch((issues) => console.log("issues " + issues));
+
+// socket
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 io.on("connection", (socket) => {
   console.log("socket is connected");
 
+  // at the starting everone will see this getstock
   socket.on("getStock", async (id, userId, cb) => {
-    try {
+    const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
       const user = await Code.findById(userId);
-      const totStock = [portfolio.stock, user.userStock];
-      cb(totStock);
-    } catch (error) {
-      console.log("Error getting stock", error);
-    }
+      return [portfolio.stock, user.userStock];
+    };
+    let a = await totStock();
+
+    cb(a);
   });
 
   socket.on("buy", async (id, userId, buyProd) => {
     let flag = false;
-    try {
+    buyProd = parseInt(buyProd, 10);
+    const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
       const user = await Code.findById(userId);
 
       if (user.userStock < buyProd) {
         socket.emit("userStock-empty");
-        const totStock = [portfolio.stock, user.userStock];
-        io.to(id).emit("show-stock", totStock);
-        socket.emit("show-userStock", totStock);
-        return;
+        return [portfolio.stock, user.userStock];
       }
-
       if (portfolio.stock < buyProd) {
         socket.emit("stock-empty");
-        const totStock = [portfolio.stock, user.userStock];
-        io.to(id).emit("show-stock", totStock);
-        socket.emit("show-userStock", totStock);
-        return;
+        return [portfolio.stock, user.userStock];
       }
 
       flag = true;
+      const idx = user.buyHistory.findIndex(
+        (element) => element.portfolio_id === id
+      );
+
+      if (idx == -1) {
+        let obj = {
+          portfolio_id: id,
+          boughtStock: buyProd,
+        };
+        user.buyHistory.push(obj);
+      } else {
+        console.log("buyProd", typeof buyProd);
+        console.log("boughtstock", typeof user.buyHistory[idx].boughtStock);
+        user.buyHistory[idx].boughtStock += buyProd;
+      }
       portfolio.stock -= buyProd;
       user.userStock -= buyProd;
       await user.save();
       await portfolio.save();
-      const remainingStock = [portfolio.stock, user.userStock];
-      io.to(id).emit("show-stock", remainingStock);
-      socket.emit("show-userStock", remainingStock);
-    } catch (error) {
-      console.log("Error buying stock", error);
-    }
-
-    if (flag) {
-      socket.emit("successfully-purchased", buyProd);
-    }
+      return [portfolio.stock, user.userStock];
+    };
+    let remainingStock = await totStock();
+    if (flag) socket.emit("successfully-purchased", buyProd);
+    io.to(id).emit("show-stock", remainingStock);
+    socket.emit("show-userStock", remainingStock);
   });
 
   socket.on("join-room", (room) => {
