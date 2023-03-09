@@ -5,9 +5,6 @@ import Portfolio from "../models/portfolio.js";
 
 const router = express.Router();
 
-
-
-
 export const getPortfolios = async (req, res) => {
   try {
     const portfolio = await Portfolio.find();
@@ -19,12 +16,13 @@ export const getPortfolios = async (req, res) => {
 };
 
 export const createPortfolio = async (req, res) => {
-  const {name, about, tags} = req.body;
+  const {name, about, tags, selectedFile} = req.body;
 
   const newPortfolio = new Portfolio({
     name,
     about,
     tags,
+    selectedFile,
   });
 
   try {
