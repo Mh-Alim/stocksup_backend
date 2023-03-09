@@ -72,6 +72,7 @@ io.on("connection", (socket) => {
 
   socket.on("buy", async (id, userId, buyProd) => {
     let flag = false;
+    buyProd = parseInt(buyProd, 10);
     const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
       const user = await Code.findById(userId);
