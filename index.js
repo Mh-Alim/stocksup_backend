@@ -70,7 +70,6 @@ io.on("connection", (socket) => {
     const totStock = async () => {
       const portfolio = await Portfolio.findById(id);
       const user = await Code.findById(userId);
-      console.log(portfolio);
       return [portfolio.stock, user.userStock];
     };
     let a = await totStock();
@@ -94,6 +93,21 @@ io.on("connection", (socket) => {
       }
 
       flag = true;
+      const idx = user.buyHistory.findIndex(
+        (element) => element.portfolio_id === id
+      );
+
+      if (idx == -1) {
+        let obj = {
+          portfolio_id: id,
+          boughtStock: buyProd,
+        };
+        user.buyHistory.push(obj);
+      } else {
+        console.log("buyProd", typeof buyProd);
+        console.log("boughtstock", typeof user.buyHistory[idx].boughtStock);
+        user.buyHistory[idx].boughtStock += buyProd;
+      }
       portfolio.stock -= buyProd;
       user.userStock -= buyProd;
       await user.save();

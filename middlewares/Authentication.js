@@ -3,9 +3,7 @@ import jwt from "jsonwebtoken";
 
 const isAuthenticate = async (req, res, next) => {
   try {
-    console.log("Authentication");
     const { token } = req.body;
-    console.log(token);
     if (!token) {
       return res.status(400).json({
         error: "Token is required",
@@ -18,7 +16,7 @@ const isAuthenticate = async (req, res, next) => {
       });
 
     req.id = decodedData.id;
-    
+
     next();
   } catch (err) {
     return res.status(400).json({

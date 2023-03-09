@@ -17,6 +17,16 @@ const nameCodeSchema = new mongoose.Schema({
     type: Number,
     default: 1000,
   },
+  buyHistory: [
+    {
+      portfolio_id: {
+        type: String,
+      },
+      boughtStock: {
+        type: Number,
+      },
+    },
+  ],
 });
 
 nameCodeSchema.methods.getJWTToken = async function (next) {
