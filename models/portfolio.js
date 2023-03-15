@@ -9,8 +9,7 @@ const portfolio = mongoose.Schema({
     type: Number,
     default: 100,
   },
-
-  //   selectedFile: String,
+  selectedFile: String,
 });
 
 var Portfolio = mongoose.model("Portfolio", portfolio);
