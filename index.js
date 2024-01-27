@@ -26,11 +26,13 @@ app.use("/api/v1", codeRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-// lakshman08  b6WipDqxkcIsWIkr
+// Pl6RlYBH4bnMDcp1
+
+const uri  = "mongodb+srv://mulchandanilakshman:Pl6RlYBH4bnMDcp1@cluster0.vhlqt85.mongodb.net/?retryWrites=true&w=majority"
 
 mongoose
   .connect(
-    "mongodb+srv://lakshman08:b6WipDqxkcIsWIkr@cluster0.x5iwwjx.mongodb.net/?retryWrites=true&w=majority",
+  uri,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
