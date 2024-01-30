@@ -16,13 +16,12 @@ export const getPortfolios = async (req, res) => {
 };
 
 export const createPortfolio = async (req, res) => {
-  const {name, about, tags, selectedFile} = req.body;
+  const {name, about,leader} = req.body;
 
   const newPortfolio = new Portfolio({
     name,
     about,
     tags,
-    selectedFile,
   });
 
   try {
