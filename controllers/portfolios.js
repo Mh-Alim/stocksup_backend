@@ -38,13 +38,19 @@ export const getLineChartData = async (req, res) => {
 
   
     const { portfolio_id } = req.body;
+    if (!portfolio_id) {
+      return new Error(`portfolio_id is required`);
+    }
 
     const portfolio = await Portfolio.findById(portfolio_id).populate(
       "soldHistory.user"
     );
 
+    if (!portfolio) {
+      return new Error(`portfolio_id is wrong`)
+    }
+
     const soldHistory = portfolio.soldHistory;
-    console.log("soldHistory ", soldHistory);
 
     // have to make two arrays
     // line chart data (y-axis data)
@@ -59,8 +65,6 @@ export const getLineChartData = async (req, res) => {
       obj[element.user._id] = element.user._id;
       totSoldStock += element.bought;
       totUser = Object.keys(obj).length;
-      console.log(Object.keys(obj), totUser)
-      console.log("next itr")
 
       console.log(element.date.toLocaleString());
       let month = element.date.getMonth();
