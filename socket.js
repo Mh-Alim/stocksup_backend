@@ -26,7 +26,10 @@ const callToSocket = (server) => {
     });
 
     socket.on("buy", async (id, userId, buyProd) => {
+      // id -> portfolio id
+      // userId -> code id
       let flag = false;
+      let soldStock;
       buyProd = parseInt(buyProd, 10);
       const totStock = async () => {
         const portfolio = await Portfolio.findById(id);
@@ -57,14 +60,33 @@ const callToSocket = (server) => {
         }
         portfolio.stock -= buyProd;
         user.userStock -= buyProd;
+
+        // avg stock / user
+
+        
         await user.save();
         await portfolio.save();
+
+
+        soldStock = 500 - portfolio.stock;
         return [portfolio.stock, user.userStock];
       };
       let remainingStock = await totStock();
       if (flag) socket.emit("successfully-purchased", buyProd);
       io.to(id).emit("show-stock", remainingStock);
-      socket.emit("show-userStock", remainingStock);
+
+
+      
+        let totUserBoughtThisStock = await Code.find({
+          buyHistory: {
+            $elemMatch: {
+              portfolio_id: { $eq: id }
+            }
+          }
+        });
+      console.log(totUserBoughtThisStock);
+      if(flag) io.to(id).emit("line-chart-data", soldStock/totUserBoughtThisStock.length)
+      // socket.emit("show-userStock", remainingStock);
     });
 
     socket.on("join-room", (room) => {
