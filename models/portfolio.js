@@ -9,6 +9,7 @@ const portfolio = mongoose.Schema({
     default: 100,
   },
 
+
   soldHistory: [
     {
       user: {
@@ -24,6 +25,11 @@ const portfolio = mongoose.Schema({
       },
     },
   ],
+
+  multiplier: {
+    type:Number,
+    default:1
+  }
 });
 
 var Portfolio = mongoose.model("Portfolio", portfolio);
