@@ -8,6 +8,10 @@ const portfolio = mongoose.Schema({
     type: Number,
     default: 100,
   },
+  multiplier: {
+    type:Number,
+    default:1
+  }
 });
 
 var Portfolio = mongoose.model("Portfolio", portfolio);
