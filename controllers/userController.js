@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Code from "../models/codeModel.js";
+import Portfolio from "../models/portfolio.js";
 
 // Login User
 const loginUser = async (req, res, next) => {
@@ -47,11 +49,36 @@ const alredyLoggedIn = async (req, res) => {
   });
 };
 
-
-
 const getStartupBuyingDetails = async (req, res) => {
+  try {
+    const userId = req.id;
+    if (!userId) {
+      return new Error(`userId is not found`)
+    }
+    const user = await Code.findById(userId);
 
-  
-  
-}
+    if (!user) {
+      return new Error(`userId is invalid`)
+    }
+    let startupsName = [];
+    let buyStartupStocks = [];
+    for (const elem of user.buyHistory) {
+      buyStartupStocks.push(elem.boughtStock);
+      const portfolio = await Portfolio.findById(elem.portfolio_id);
+      startupsName.push(portfolio.name);
+    };
+
+
+    return res.json({
+      startupsName,
+      buyStartupStocks,
+    });
+  }
+  catch (err) {
+    console.log("Error: ", err.message);
+    return res.json({
+      error: err.message,
+    })
+  }
+};
 export { loginUser, alredyLoggedIn, getStartupBuyingDetails };

@@ -40,6 +40,6 @@ const router = express.Router();
 router.post("/upload_codes", upload_codes);
 router.post("/login", loginUser);
 router.post("/is_logged_in", isAuthenticate, alredyLoggedIn);
-router.get("/user/buy/details",isAuthenticate, getStartupBuyingDetails)
+router.post("/user/buy/details",isAuthenticate, getStartupBuyingDetails)
 
 export default router;
