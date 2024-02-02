@@ -16,7 +16,6 @@ const isAuthenticate = async (req, res, next) => {
       });
 
     req.id = decodedData.id;
-
     next();
   } catch (err) {
     return res.status(400).json({
