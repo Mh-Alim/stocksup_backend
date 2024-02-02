@@ -34,7 +34,7 @@ const callToSocket = (server) => {
       const totStock = async () => {
         const portfolio = await Portfolio.findById(id);
         const user = await Code.findById(userId);
-
+        console.log("user is ", user);
         if (user.userStock < buyProd) {
           socket.emit("userStock-empty");
           return [portfolio.stock, user.userStock];
@@ -58,6 +58,13 @@ const callToSocket = (server) => {
         } else {
           user.buyHistory[idx].boughtStock += buyProd;
         }
+
+        let hist = {
+          user: user._id,
+          bought: buyProd,
+          date : Date.now()
+        }
+        portfolio.soldHistory.push(hist)
         portfolio.stock -= buyProd;
         user.userStock -= buyProd;
 

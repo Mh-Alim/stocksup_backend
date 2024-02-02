@@ -8,11 +8,24 @@ const portfolio = mongoose.Schema({
     type: Number,
     default: 100,
   },
+
+  soldHistory: [
+    {
+      user: {
+        type: mongoose.Types.ObjectId,
+        ref: "Code",
+      },
+      bought: {
+        type: Number,
+      },
+      date: {
+        type: Date,
+        default: Date.now(),
+      },
+    },
+  ],
 });
 
 var Portfolio = mongoose.model("Portfolio", portfolio);
-
-
-
 
 export default Portfolio;

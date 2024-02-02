@@ -25,6 +25,7 @@ const nameCodeSchema = new mongoose.Schema({
       boughtStock: {
         type: Number,
       },
+      
     },
   ],
 });
