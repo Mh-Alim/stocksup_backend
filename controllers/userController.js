@@ -46,4 +46,12 @@ const alredyLoggedIn = async (req, res) => {
     user: user,
   });
 };
-export { loginUser, alredyLoggedIn };
+
+
+
+const getStartupBuyingDetails = async (req, res) => {
+
+  
+  
+}
+export { loginUser, alredyLoggedIn, getStartupBuyingDetails };

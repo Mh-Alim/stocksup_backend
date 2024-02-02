@@ -1,6 +1,6 @@
 import express from "express";
 import { upload_codes } from "../controllers/codeController.js";
-import { alredyLoggedIn, loginUser } from "../controllers/userController.js";
+import { alredyLoggedIn, loginUser, getStartupBuyingDetails } from "../controllers/userController.js";
 import isAuthenticate from "../middlewares/Authentication.js";
 // import fs from "fs";
 // import path from "path";
@@ -40,5 +40,6 @@ const router = express.Router();
 router.post("/upload_codes", upload_codes);
 router.post("/login", loginUser);
 router.post("/is_logged_in", isAuthenticate, alredyLoggedIn);
+router.get("/user/buy/details",isAuthenticate, getStartupBuyingDetails)
 
 export default router;
