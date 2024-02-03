@@ -94,8 +94,9 @@ export const getAudienceRanking = async (req, res) => {
 
 export const currUserRank = async (req,res) => {
   try {
-    const userId = req.query.userId; 
-
+    var userId = req.query.userId; 
+    userId = userId.substring(1, userId.length - 1);
+console.log(userId)
     const user = await Code.findById(userId);
     if (!user) {
       console.log("User not found")
