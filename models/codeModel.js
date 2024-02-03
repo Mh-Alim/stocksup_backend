@@ -25,9 +25,16 @@ const nameCodeSchema = new mongoose.Schema({
       boughtStock: {
         type: Number,
       },
-      
     },
   ],
+  worth : {
+    type: Number,
+    default:0
+  },
+  rank : {
+    type: Number,
+    default:9000
+  }
 });
 
 nameCodeSchema.methods.getJWTToken = async function (next) {
