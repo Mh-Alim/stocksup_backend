@@ -37,27 +37,29 @@ const updateWorth = async () => {
 
 
 
-
-
-
 const sortByWorth = async (pageNumber = 1, pageSize = 10) => {
   try {
     const codes = await Code.find()
-      .sort({ worth: 'desc' })
+      .sort({ rank: 'asc' })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);
 
+      console.log("from sortByWorth")
+      console.log(codes)
     return codes;
   } catch (error) {
     throw error;
   }
 };
 
+
 export const audienceRanking = async (req, res) => {
   const pageNumber = parseInt(req.query.pageNumber) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
   try {
     const codes = await sortByWorth(pageNumber, pageSize);
+    console.log("from audience")
+    console.log(codes)
     res.send(codes);
   } catch (error) {
     console.log(error.message);
