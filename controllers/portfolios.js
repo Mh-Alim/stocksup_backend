@@ -44,8 +44,6 @@ const sortByWorth = async (pageNumber = 1, pageSize = 10) => {
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);
 
-      console.log("from sortByWorth")
-      console.log(codes)
     return codes;
   } catch (error) {
     throw error;
@@ -58,9 +56,13 @@ export const audienceRanking = async (req, res) => {
   const pageSize = parseInt(req.query.pageSize) || 10;
   try {
     const codes = await sortByWorth(pageNumber, pageSize);
-    console.log("from audience")
-    console.log(codes)
-    res.send(codes);
+    const totDocuments = await Code.countDocuments({});
+    res.status(200).json({
+      users: codes,
+      totDocuments,
+      pageNumber,
+      pageSize: pageSize,
+    });
   } catch (error) {
     console.log(error.message);
   }
