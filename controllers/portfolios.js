@@ -7,6 +7,7 @@ import Portfolio from "../models/portfolio.js";
 const router = express.Router();
 
 const updateWorth = async () => {
+  
   try {
     const portfolios = await Portfolio.find();
     const portfolioMap = new Map(
@@ -19,6 +20,7 @@ const updateWorth = async () => {
     const codes = await Code.find();
 
     for (const code of codes) {
+      code.worth = 0;
       for (const buyRecord of code.buyHistory) {
         const portfolio = portfolios.find(
           (p) => p._id.toString() === buyRecord.portfolio_id
