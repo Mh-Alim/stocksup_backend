@@ -54,6 +54,7 @@ const sortByWorth = async (pageNumber = 1, pageSize = 10) => {
 export const audienceRanking = async (req, res) => {
   const pageNumber = parseInt(req.query.pageNumber) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
+  updateWorth()
   try {
     const codes = await sortByWorth(pageNumber, pageSize);
     const totDocuments = await Code.countDocuments({});
@@ -67,6 +68,7 @@ export const audienceRanking = async (req, res) => {
     console.log(error.message);
   }
 };
+
 
 // Assuming the Code model is imported properly
 
@@ -94,6 +96,8 @@ export const getAudienceRanking = async (req, res) => {
     console.error("Error fetching audience ranking:", error.message);
     res.status(500).send({ error: "Internal Server Error" });
   }
+
+
 };
 
 export const currUserRank = async (req,res) => {
