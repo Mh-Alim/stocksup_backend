@@ -9,38 +9,43 @@ const router = express.Router();
 const updateWorth = async () => {
   try {
     const portfolios = await Portfolio.find();
-    const portfolioMap = new Map(portfolios.map((portfolio) => [portfolio._id.toString(), portfolio.multiplier]));
+    const portfolioMap = new Map(
+      portfolios.map((portfolio) => [
+        portfolio._id.toString(),
+        portfolio.multiplier,
+      ])
+    );
 
     const codes = await Code.find();
 
     for (const code of codes) {
-      
       for (const buyRecord of code.buyHistory) {
-        const portfolio = portfolios.find((p) => p._id.toString() === buyRecord.portfolio_id);
+        const portfolio = portfolios.find(
+          (p) => p._id.toString() === buyRecord.portfolio_id
+        );
 
         if (portfolio) {
-          const updatedWorth = buyRecord.boughtStock * portfolioMap.get(buyRecord.portfolio_id);
-        
+          const updatedWorth =
+            buyRecord.boughtStock * portfolioMap.get(buyRecord.portfolio_id);
+
           code.worth += updatedWorth;
-            // console.log(code.name+ " " +  updatedWorth + " "+ code.worth);
+          // console.log(code.name+ " " +  updatedWorth + " "+ code.worth);
         }
       }
 
       await code.save();
     }
 
-    console.log('Worth updated successfully!');
+    console.log("Worth updated successfully!");
   } catch (error) {
-    console.error('Error updating worth:', error.message);
+    console.error("Error updating worth:", error.message);
   }
 };
-
-
 
 const sortByWorth = async (pageNumber = 1, pageSize = 10) => {
   try {
     const codes = await Code.find()
-      .sort({ rank: 'asc' })
+      .sort({ rank: "asc" })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize);
 
@@ -49,7 +54,6 @@ const sortByWorth = async (pageNumber = 1, pageSize = 10) => {
     throw error;
   }
 };
-
 
 export const audienceRanking = async (req, res) => {
   const pageNumber = parseInt(req.query.pageNumber) || 1;
@@ -69,7 +73,6 @@ export const audienceRanking = async (req, res) => {
 };
 
 // Assuming the Code model is imported properly
-
 
 export const updateRanks = async () => {
   try {
@@ -96,55 +99,23 @@ export const getAudienceRanking = async (req, res) => {
   }
 };
 
-export const currUserRank = async (req,res) => {
+export const currUserRank = async (req, res) => {
   try {
-    var userId = req.query.userId; 
+    var userId = req.query.userId;
     userId = userId.substring(1, userId.length - 1);
-console.log(userId)
+    console.log(userId);
     const user = await Code.findById(userId);
     if (!user) {
-      console.log("User not found")
+      console.log("User not found");
     }
-    res.send(user)
+    res.send(user);
   } catch (error) {
     console.error("Error fetching user with rank:", error.message);
     throw error;
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // updateWorth();
-
 
 // const sortByWorth = async (pageNumber = 1, pageSize = 10) => {
 //   try {
@@ -172,7 +143,6 @@ console.log(userId)
 //   }
 // }
 
-
 // export const currUserRank = async (req, res) => {
 //   const userId = req.query.userId; // Assuming the user ID is part of the request parameters
 
@@ -192,21 +162,16 @@ console.log(userId)
 //   }
 // };
 
-
-
 const multiplier = async (multiplierData) => {
   try {
-   
-    
-    const port = await Portfolio.find({name : "Portfolio14"})
-    console.log(port)
+    const port = await Portfolio.find({ name: "Portfolio14" });
+    console.log(port);
     // Loop through multiplierData
     for (const portfolioName in multiplierData) {
       if (multiplierData.hasOwnProperty(portfolioName)) {
         // Find the portfolio document by name
-    
-        const portfolio = await Portfolio.findOne({ name: portfolioName });
 
+        const portfolio = await Portfolio.findOne({ name: portfolioName });
 
         // Update the multiplier for the found portfolio
         if (portfolio) {
@@ -227,21 +192,21 @@ const multiplier = async (multiplierData) => {
 
 // JSON data as a variable
 const multiplierData = {
-  "Portfolio1": 1,
-  "Portfolio2": 1,
-  "Portfolio3": 9,
-  "Portfolio4": 1,
-  "Portfolio5": 1,
-  "Portfolio6": 1,
-  "Portfolio7": 1,
-  "Portfolio8": 1,
-  "Portfolio9": 1,
-  "Portfolio10": 1,
-  "Portfolio11": 1,
-  "Portfolio12": 1,
-  "Portfolio13": 1,
-  "Portfolio14": 1,
-  "Portfolio15": 1
+  Portfolio1: 1,
+  Portfolio2: 1,
+  Portfolio3: 9,
+  Portfolio4: 1,
+  Portfolio5: 1,
+  Portfolio6: 1,
+  Portfolio7: 1,
+  Portfolio8: 1,
+  Portfolio9: 1,
+  Portfolio10: 1,
+  Portfolio11: 1,
+  Portfolio12: 1,
+  Portfolio13: 1,
+  Portfolio14: 1,
+  Portfolio15: 1,
 };
 
 // // Example usage
@@ -250,9 +215,9 @@ const multiplierData = {
 export const getPortfolios = async (req, res) => {
   try {
     const portfolio = await Portfolio.find();
-    const port = await Portfolio.find({name : "Portfolio14"})
-    console.log(port)
- 
+    const port = await Portfolio.find({ name: "Portfolio14" });
+    console.log(port);
+
     res.status(200).json(portfolio);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -279,8 +244,6 @@ export const createPortfolio = async (req, res) => {
 
 export const getLineChartData = async (req, res) => {
   try {
-
-  
     const { portfolio_id } = req.body;
     if (!portfolio_id) {
       return new Error(`portfolio_id is required`);
@@ -291,7 +254,7 @@ export const getLineChartData = async (req, res) => {
     );
 
     if (!portfolio) {
-      return new Error(`portfolio_id is wrong`)
+      return new Error(`portfolio_id is wrong`);
     }
 
     const soldHistory = portfolio.soldHistory;
@@ -310,17 +273,22 @@ export const getLineChartData = async (req, res) => {
       totSoldStock += element.bought;
       totUser = Object.keys(obj).length;
 
-      console.log(element.date.toLocaleString());
       let month = element.date.getMonth();
       let day = element.date.getDay();
+      let year = element.date.getFullYear();
       let curr = new Date(Date.now());
       let time;
-      if (month === curr.getMonth()) {
-        if (day === curr.getDay()) time = `${element.date.getHours()}:${element.date.getMinutes()}`;
-        else time = `${day}/${element.date.toLocaleString("default", { month: "long", })}`;
-      }
-      else time = `${element.date.toLocaleString("default", { month: "long", })}/${element.date.getYear()}`;
-
+      if (
+        day === curr.getDay() &&
+        month === curr.getMonth() &&
+        year === curr.getFullYear()
+      )
+        time = `${element.date.toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+      else time = `${`${element.date.getDate()}/${element.date.getMonth() + 1}/${element.date.getFullYear()}`}`;
       if (x.length > 0 && x[x.length - 1] === time) {
         lineData[lineData.length - 1] = totSoldStock / totUser;
       } else {
@@ -329,15 +297,13 @@ export const getLineChartData = async (req, res) => {
       }
     });
 
-
     return res.json({
       x,
       lineData,
       totUser,
-      totSoldStock
+      totSoldStock,
     });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err.message);
   }
 };
