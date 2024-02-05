@@ -185,7 +185,7 @@ export const getMultiplier = async (req, res) => {
     res.header('Content-Type', 'application/json');
     
     // Send the multiplierMap as JSON response
-    res.send(JSON.stringify([...multiplierMap]));
+    res.send(multiplierData);
 
   } catch (error) {
     // Handle errors and send an appropriate response to the client
