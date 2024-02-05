@@ -61,6 +61,7 @@ export const audienceRanking = async (req, res) => {
   const pageNumber = parseInt(req.query.pageNumber) || 1;
   const pageSize = parseInt(req.query.pageSize) || 10;
   updateWorth()
+  updateRanks()
   try {
     const codes = await sortByWorth(pageNumber, pageSize);
     const totDocuments = await Code.countDocuments({});
