@@ -177,8 +177,9 @@ export const getMultiplier = async (req, res) => {
     const multiplierMap = new Map();
 
     portfolios.forEach(portfolio => {
-      multiplierMap.set(portfolio.id, portfolio.multiplier);
+      multiplierMap.set(portfolio.name, portfolio.multiplier);
     });
+    console.log(multiplierMap)
 
     // Set the content type to JSON
     res.header('Content-Type', 'application/json');
