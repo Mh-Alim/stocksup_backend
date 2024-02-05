@@ -168,10 +168,35 @@ export const currUserRank = async (req, res) => {
 //   }
 // };
 
+
+export const getMultiplier = async (req, res) => {
+  try {
+    const portfolios = await Portfolio.find();
+    
+    // Create a map to store portfolio ID and multiplier pairs
+    const multiplierMap = new Map();
+
+    portfolios.forEach(portfolio => {
+      multiplierMap.set(portfolio.id, portfolio.multiplier);
+    });
+
+    // Set the content type to JSON
+    res.header('Content-Type', 'application/json');
+    
+    // Send the multiplierMap as JSON response
+    res.send(JSON.stringify([...multiplierMap]));
+
+  } catch (error) {
+    // Handle errors and send an appropriate response to the client
+    console.error("Error fetching portfolios:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
 const multiplier = async (multiplierData) => {
   try {
-    const port = await Portfolio.find({ name: "Portfolio14" });
-    console.log(port);
     // Loop through multiplierData
     for (const portfolioName in multiplierData) {
       if (multiplierData.hasOwnProperty(portfolioName)) {
