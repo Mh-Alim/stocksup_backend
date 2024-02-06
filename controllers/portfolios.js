@@ -118,7 +118,9 @@ export const currUserRank = async (req, res) => {
     res.send(user);
   } catch (error) {
     console.error("Error fetching user with rank:", error.message);
-    throw error;
+    res.status(404).json({
+      err: error.message,
+    })
   }
 };
 
