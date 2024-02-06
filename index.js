@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
 import callToSocket from "./socket.js";
+import { generateAndStoreUniqueCodes } from "./uniqueCodesGenerator.js";
 
 const app = express();
 
@@ -11,6 +12,11 @@ app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+
+
+// generateAndStoreUniqueCodes()
+
+
 // ROUTE IMPORTS
 
 // ERROR MIDDLEWARE -> customErrorHandler

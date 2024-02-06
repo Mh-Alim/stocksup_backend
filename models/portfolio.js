@@ -6,7 +6,7 @@ const portfolio = mongoose.Schema({
   leader: String,
   stock: {
     type: Number,
-    default: 100,
+    default: 20000,
   },
 
 
