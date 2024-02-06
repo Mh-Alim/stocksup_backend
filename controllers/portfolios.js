@@ -1,8 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import Code from "../models/codeModel.js";
-
 import Portfolio from "../models/portfolio.js";
+import portfoliosData from "../Portfolios.js"
 
 const router = express.Router();
 
@@ -259,23 +259,40 @@ export const getPortfolios = async (req, res) => {
   }
 };
 
-export const createPortfolio = async (req, res) => {
-  const { name, about, leader } = req.body;
 
-  const newPortfolio = new Portfolio({
-    name,
-    about,
-    tags,
-  });
 
+
+const addPortfolios = async () => {
   try {
-    await newPortfolio.save();
+    const createdPortfolios = [];
+    const count = await Portfolio.find();
+    if(count.length > 0)
+    {
+      console.log("not empty")
+      return
+    }
+    for (const portfolioData of portfoliosData) {
+      const { name, about, leader } = portfolioData;
 
-    res.status(201).json(newPortfolio);
+      const newPortfolio = new Portfolio({
+        name,
+        about,
+        leader
+      });
+
+      await newPortfolio.save();
+      createdPortfolios.push(newPortfolio);
+    }
+console.log("done")
+    return createdPortfolios;
   } catch (error) {
-    res.status(409).json({ message: error.message });
+    console.error("Error creating portfolios from JSON file:", error.message);
+    
   }
 };
+
+addPortfolios()
+
 
 export const getLineChartData = async (req, res) => {
   try {
