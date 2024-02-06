@@ -75,7 +75,7 @@ const callToSocket = (server) => {
         await portfolio.save();
 
 
-        soldStock = 500 - portfolio.stock;
+        soldStock = 20000 - portfolio.stock;
         return [portfolio.stock, user.userStock];
       };
       let remainingStock = await totStock();
