@@ -46,10 +46,12 @@ const updateWorth = async () => {
 
 const sortByWorth = async (pageNumber = 1, pageSize = 10) => {
   try {
-    const codes = await Code.find()
+    const codes = await Code.find({isActive: true})
       .sort({ rank: "asc" })
       .skip((pageNumber - 1) * pageSize)
-      .limit(pageSize);
+      .limit(pageSize)
+      
+      console.log(codes);
 
     return codes;
   } catch (error) {
@@ -64,7 +66,7 @@ export const audienceRanking = async (req, res) => {
   updateRanks()
   try {
     const codes = await sortByWorth(pageNumber, pageSize);
-    const totDocuments = await Code.countDocuments({});
+    const totDocuments = await Code.countDocuments({isActive: true});
     res.status(200).json({
       users: codes,
       totDocuments,
