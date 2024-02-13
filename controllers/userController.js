@@ -62,16 +62,19 @@ const getStartupBuyingDetails = async (req, res) => {
     }
     let startupsName = [];
     let buyStartupStocks = [];
+    let multiplier = [];
     for (const elem of user.buyHistory) {
       buyStartupStocks.push(elem.boughtStock);
       const portfolio = await Portfolio.findById(elem.portfolio_id);
       startupsName.push(portfolio.name);
+      multiplier.push(portfolio.multiplier);
     };
 
 
     return res.json({
       startupsName,
       buyStartupStocks,
+      multiplier,
     });
   }
   catch (err) {
