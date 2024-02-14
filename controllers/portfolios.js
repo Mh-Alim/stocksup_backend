@@ -328,12 +328,14 @@ export const getLineChartData = async (req, res) => {
       totUser = Object.keys(obj).length;
 
       let month = element.date.getMonth();
-      let day = element.date.getDay();
+      let day = element.date.getDate();
       let year = element.date.getFullYear();
+      console.log(month, day, year);
       let curr = new Date(Date.now());
       let time;
+      
       if (
-        day === curr.getDay() &&
+        day === curr.getDate() &&
         month === curr.getMonth() &&
         year === curr.getFullYear()
       )
@@ -342,7 +344,8 @@ export const getLineChartData = async (req, res) => {
           hour: "2-digit",
           minute: "2-digit",
         })}`;
-      else time = `${`${element.date.getDate()}/${element.date.getMonth() + 1}/${element.date.getFullYear()}`}`;
+      else time = `${`${day}/${month + 1}/${year}`}`;
+      console.log("time : " ,time);
       if (x.length > 0 && x[x.length - 1] === time) {
         lineData[lineData.length - 1] = totSoldStock / totUser;
       } else {
@@ -350,6 +353,8 @@ export const getLineChartData = async (req, res) => {
         lineData.push(totSoldStock / totUser);
       }
     });
+
+    console.log("lineData: " , lineData)
 
     return res.json({
       x,
